@@ -26,11 +26,14 @@
 #include <string>
 #include <winsock2.h>
 #include <Ws2tcpip.h>
+#include <math.h>
+#include <algorithm>
 #include "json/json.h"
 #include "json/json-forwards.h"
 #include "geoCoord.h"
 #include "DriverModel.h"
 #include "MsgBlob.h"
+#include "TrajAlgo.h"
 
 constexpr auto PI = 3.14159265;
 
@@ -109,6 +112,10 @@ geoCoord geoPoint;
 
 /*==========================================================================*/
 
+traj_algo::vehicle veh_info;
+traj_algo::TrajAlgo TrajCalculator; 
+
+
 BOOL APIENTRY DllMain(HANDLE hModule,
                       DWORD ul_reason_for_call,
                       LPVOID lpReserved)
@@ -142,16 +149,20 @@ DRIVERMODEL_API int DriverModelSetValue(long type,
   {
   case DRIVER_DATA_PATH:
   case DRIVER_DATA_TIMESTEP:
+    veh_info.sim_timestep_length = double_value;
+    return 1;
   case DRIVER_DATA_TIME:
     veh_timestamp = double_value;           // This is timestamp from vissim. Resolution: 0.1 simulation second.
     intTimestamp = static_cast<long>(10 * veh_timestamp);      // This converts the original timestamp into integer for the use of modulo operator (%) later.
     veh_secmark = intTimestamp % 600 * 100; // secMark follows the units from the SAE J2735 standard.
+    veh_info.sim_timestep = double_value;
     return 1;
   case DRIVER_DATA_USE_UDA:
     return 0; /* doesn't use any UDAs */
               /* must return 1 for desired values of index1 if UDA values are to be sent from/to Vissim */
   case DRIVER_DATA_VEH_ID:
     veh_id = long_value;
+    veh_info.veh_id = long_value;
     return 1;
   case DRIVER_DATA_VEH_LANE:
   case DRIVER_DATA_VEH_ODOMETER:
@@ -159,8 +170,11 @@ DRIVERMODEL_API int DriverModelSetValue(long type,
   case DRIVER_DATA_VEH_LATERAL_POSITION:
   case DRIVER_DATA_VEH_VELOCITY:
     veh_speed = double_value;
+    veh_info.speed_current = double_value;
     return 1;
   case DRIVER_DATA_VEH_ACCELERATION:
+    veh_info.accel_current = double_value;
+    return 1;
   case DRIVER_DATA_VEH_LENGTH:
     length_cm = double_value * 100;
     return 1;
@@ -169,6 +183,8 @@ DRIVERMODEL_API int DriverModelSetValue(long type,
     return 1;
   case DRIVER_DATA_VEH_WEIGHT:
   case DRIVER_DATA_VEH_MAX_ACCELERATION:
+    veh_info.accel_max = double_value;
+    veh_info.decel_max = -veh_info.accel_max; 
     return 1;
   case DRIVER_DATA_VEH_TURNING_INDICATOR:
     turning_indicator = long_value;
@@ -179,6 +195,7 @@ DRIVERMODEL_API int DriverModelSetValue(long type,
     return 1;
   case DRIVER_DATA_VEH_DESIRED_VELOCITY:
     desired_velocity = double_value;
+    veh_info.speed_desired_vissim = double_value;
     return 1;
   case DRIVER_DATA_VEH_TYPE:
   case DRIVER_DATA_VEH_X_COORDINATE:
@@ -288,16 +305,27 @@ DRIVERMODEL_API int DriverModelSetValue(long type,
   case DRIVER_DATA_SIGNAL_DISTANCE:
   case DRIVER_DATA_SIGNAL_STATE:
   case DRIVER_DATA_SIGNAL_STATE_START:
+    veh_info.signal_start_time = double_value;
+    return 1;
   case DRIVER_DATA_SPEED_LIMIT_DISTANCE:
   case DRIVER_DATA_SPEED_LIMIT_VALUE:
+    veh_info.speed_max = double_value;
+    veh_info.speed_departure = double_value;
   case DRIVER_DATA_PRIO_RULE_DISTANCE:
   case DRIVER_DATA_PRIO_RULE_STATE:
   case DRIVER_DATA_ROUTE_SIGNAL_DISTANCE:
+    veh_info.distance_to_signal = double_value;
+    return 1;
   case DRIVER_DATA_ROUTE_SIGNAL_STATE:
+    veh_info.signal_state = long_value;
+    return 1;
   case DRIVER_DATA_ROUTE_SIGNAL_CYCLE:
+    veh_info.signal_cycle_length = double_value; 
     return 1;
   case DRIVER_DATA_ROUTE_SIGNAL_SWITCH:
-    return 0; /* (to avoid getting sent lots of signal switch data) */
+    veh_info.signal_remaining_time = double_value; 
+    veh_info.signal_state_next = long_value;
+    return 1; 
   case DRIVER_DATA_CONFL_AREAS_COUNT:
     return 0; /* (to avoid getting sent lots of conflict area data) */
   case DRIVER_DATA_CONFL_AREA_TYPE:
@@ -311,6 +339,7 @@ DRIVERMODEL_API int DriverModelSetValue(long type,
     return 1;
   case DRIVER_DATA_DESIRED_ACCELERATION:
     desired_acceleration = double_value;
+    veh_info.accel_desired_vissim = desired_acceleration;
     return 1;
   case DRIVER_DATA_DESIRED_LANE_ANGLE:
     desired_lane_angle = double_value;
@@ -346,7 +375,7 @@ DRIVERMODEL_API int DriverModelSetValue3(long type,
   switch (type)
   {
   case DRIVER_DATA_ROUTE_SIGNAL_SWITCH:
-    return 0; /* don't send any more switch values */
+    return 1; /* don't send any more switch values */
   default:
     return 0;
   }
@@ -383,6 +412,7 @@ DRIVERMODEL_API int DriverModelGetValue(long type,
     return 1;
   case DRIVER_DATA_VEH_DESIRED_VELOCITY:
     *double_value = desired_velocity;
+    *double_value = veh_info.speed_desired_suggestion;
     return 1;
   case DRIVER_DATA_VEH_COLOR:
     *long_value = vehicle_color;
@@ -393,7 +423,8 @@ DRIVERMODEL_API int DriverModelGetValue(long type,
     *long_value = 1;
     return 1;
   case DRIVER_DATA_DESIRED_ACCELERATION:
-    *double_value = desired_acceleration;
+    // *double_value = desired_acceleration;
+    *double_value = veh_info.accel_desired_suggestion;
     return 1;
   case DRIVER_DATA_DESIRED_LANE_ANGLE:
     *double_value = desired_lane_angle;
@@ -503,7 +534,9 @@ DRIVERMODEL_API int DriverModelExecuteCommand(long number)
   case DRIVER_COMMAND_KILL_DRIVER:
     return 1;
   case DRIVER_COMMAND_MOVE_DRIVER:
-      return 1;
+
+    TrajCalculator.plan_maneuvers(veh_info)
+    return 1;
   default:
     return 0;
   }
