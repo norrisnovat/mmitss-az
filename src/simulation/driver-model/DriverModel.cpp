@@ -535,7 +535,7 @@ DRIVERMODEL_API int DriverModelExecuteCommand(long number)
     return 1;
   case DRIVER_COMMAND_MOVE_DRIVER:
 
-    TrajCalculator.plan_maneuvers(veh_info)
+    TrajCalculator.plan_maneuvers(veh_info);
     return 1;
   default:
     return 0;

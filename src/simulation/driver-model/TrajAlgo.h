@@ -143,10 +143,10 @@ class TrajAlgo
     TrajConfig config;
 
     // TS planning related variables
-    double max_comfort_accel_ = config_.vehicle_accel_limit * config_.vehicle_accel_limit_multiplier;
-    double max_comfort_decel_ = -1 * config_.vehicle_decel_limit * config_.vehicle_decel_limit_multiplier;
-    double max_comfort_decel_norm_ = config_.vehicle_decel_limit * config_.vehicle_decel_limit_multiplier;
-    double emergency_decel_norm_ = 2 * config_.vehicle_decel_limit * config_.vehicle_decel_limit_multiplier;
+    double max_comfort_accel_ = config.vehicle_accel_limit * config.vehicle_accel_limit_multiplier;
+    double max_comfort_decel_ = -1 * config.vehicle_decel_limit * config.vehicle_decel_limit_multiplier;
+    double max_comfort_decel_norm_ = config.vehicle_decel_limit * config.vehicle_decel_limit_multiplier;
+    double emergency_decel_norm_ = 2 * config.vehicle_decel_limit * config.vehicle_decel_limit_multiplier;
     double epsilon_ = 0.001; //Small constant to compare (double) 0.0 with
     double accel_epsilon_ = 0.0001; //Small constant to compare (double) 0.0 with
 
@@ -175,7 +175,7 @@ class TrajAlgo
     /**
        */
 
-    double get_nearest_green_entry_time(const double& current_time, const double& earliest_entry_time, double minimum_required_green_time = 0.0, vehicle& veh_info) const;
+    double get_nearest_green_entry_time(const double& current_time, const double& earliest_entry_time, vehicle& veh_info, double minimum_required_green_time = 0.0) const;
     
 
     /**

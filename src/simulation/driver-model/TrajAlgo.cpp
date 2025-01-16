@@ -125,7 +125,7 @@ void TrajAlgo::planWhenAPPROACHING(vehicle& veh_info)
 
   double minimum_required_green_time = 0.0;
 
-  double scheduled_entry_time = get_nearest_green_entry_time(veh_info.sim_timestep, earliest_entry_time, minimum_required_green_time, veh_info);
+  double scheduled_entry_time = get_nearest_green_entry_time(veh_info.sim_timestep, earliest_entry_time, veh_info, minimum_required_green_time);
 
   
   auto boundary_distances = get_delta_x(veh_info.speed_current, veh_info.speed_max, veh_info.speed_max, config.algo_minimum_speed, max_accel, max_decel);
@@ -164,10 +164,10 @@ double TrajAlgo::get_earliest_entry_time(double remaining_distance, double free_
   double v_hat = get_inflection_speed_value(x, x1, x2, free_flow_speed, current_speed, departure_speed, max_accel, max_decel);
 
   // RCLCPP_DEBUG_STREAM(rclcpp::get_logger("lci_strategic_plugin"), "x: " << x << ", x2: " << x2 << ", x1: " << x1 << ", v_hat: " << v_hat);
-  if (v_hat <= config_.algo_minimum_speed - epsilon_ || isnan(v_hat))
+  if (v_hat <= config.algo_minimum_speed - epsilon_ || isnan(v_hat))
   {
     // RCLCPP_DEBUG_STREAM(rclcpp::get_logger("lci_strategic_plugin"), "Detected that v_hat is smaller than allowed!!!: " << v_hat);
-    v_hat = config_.algo_minimum_speed;
+    v_hat = config.algo_minimum_speed;
   }
 
   if (v_hat >= free_flow_speed + epsilon_)
@@ -224,7 +224,7 @@ double TrajAlgo::get_earliest_entry_time(double remaining_distance, double free_
 }
 
 
-double TrajAlgo::get_nearest_green_entry_time(const double& current_time, const double& earliest_entry_time, double minimum_required_green_time, vehicle& veh_info) const
+double TrajAlgo::get_nearest_green_entry_time(const double& current_time, const double& earliest_entry_time, vehicle& veh_info, double minimum_required_green_time) const
 {
   
   if (veh_info.signal_state == 3)
