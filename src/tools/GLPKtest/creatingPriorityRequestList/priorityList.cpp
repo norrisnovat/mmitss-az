@@ -22,13 +22,6 @@ int main()
     int numberOfTruckInList{};
     int vehicleClass{}; //to match the old PRSolver
     int noOfRequest{};
-    int *vehicleID = new int[noOfRequest];
-    int *basicVehicleRole = new int[noOfRequest];
-    int *inBoundLaneID = new int[noOfRequest];
-    double *expectedTimeOfArrival = new double[noOfRequest];
-    double *expectedTimeOfArrival_Duration  = new double[noOfRequest];
-    int *vehicleRequestedPhase = new int[noOfRequest];
-    int *priorityRequestStatus = new int[noOfRequest];
 
     list<requestEntry> ActiveRequestList;
 
@@ -37,8 +30,18 @@ int main()
     std::ifstream configJson("requestList.json");
     std::string configJsonString((std::istreambuf_iterator<char>(configJson)), std::istreambuf_iterator<char>());
     reader.parse(configJsonString.c_str(), jsonObject);
-    const Json::Value values = jsonObject["PriorityRequestList"]["requestorInfo"];
     noOfRequest = (jsonObject["PriorityRequestList"]["noOfRequest"]).asInt();
+    
+    // Allocate arrays AFTER reading noOfRequest from JSON
+    int *vehicleID = new int[noOfRequest];
+    int *basicVehicleRole = new int[noOfRequest];
+    int *inBoundLaneID = new int[noOfRequest];
+    double *expectedTimeOfArrival = new double[noOfRequest];
+    double *expectedTimeOfArrival_Duration  = new double[noOfRequest];
+    int *vehicleRequestedPhase = new int[noOfRequest];
+    int *priorityRequestStatus = new int[noOfRequest];
+    
+    const Json::Value values = jsonObject["PriorityRequestList"]["requestorInfo"];
     requestEntry requestList;
 
     for (int i = 0; i < noOfRequest; i++)

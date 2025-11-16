@@ -18,6 +18,8 @@
 """
 import json
 import socket
+import sys
+import struct
 import time, datetime
 from SimulatedBsmBlobProcessor import SimulatedBsmBlobProcessor
 
@@ -44,7 +46,10 @@ while True:
         bsmJson = processor.unpack_blob_to_json(data)
         # Forward the unpacked data (JSON) to the message distributor
         s.sendto(bsmJson.encode(), messageDistributor)
-    except: pass
+    except (ValueError, struct.error, KeyError) as e:
+        print(f"Warning: Failed to unpack BSM blob: {e}", file=sys.stderr)
+    except Exception as e:
+        print(f"Error: Unexpected error processing blob: {e}", file=sys.stderr)
     
 # Close the socket before exiting
 s.close()

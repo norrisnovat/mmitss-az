@@ -1,34 +1,108 @@
 version: "3.8"
-services:
 
 # Note:  MMITSS_ROOT is an environment variable set to the root location of the configuration repository
 # for example /home/<my_home_directory>
 
-x-var: &IMAGE_MRP
-    mmitssuarizona/mmitss-mrp-$PROCESSOR:2.3
+# ============================================================================
+# NETWORK CONFIGURATION OPTIONS
+# ============================================================================
+#
+# This docker-compose supports three network modes. Choose ONE by modifying
+# the 'networks' section at the bottom of this file.
+#
+# OPTION 1: BRIDGE Network (✅ RECOMMENDED for local testing & development)
+#   ┌─────────────────────────────────────────────────────────────────────┐
+#   │ Advantages:                                                         │
+#   │ • Simple, requires no configuration                                │
+#   │ • Containers reach each other via DNS (container name)             │
+#   │ • No IP conflicts with host network                                │
+#   │ • Best for Docker Desktop, development, CI/CD                      │
+#   │                                                                     │
+#   │ How to use:                                                         │
+#   │ 1. In 'networks' section at bottom, set: driver: bridge            │
+#   │ 2. Remove 'ipv4_address' from each service                         │
+#   │ 3. Services communicate via container name (DNS resolution)         │
+#   │                                                                     │
+#   │ Example: ping speedway-campbell (from another container)           │
+#   └─────────────────────────────────────────────────────────────────────┘
+#
+# OPTION 2: MACVLAN Network (For production with physical network isolation)
+#   ┌─────────────────────────────────────────────────────────────────────┐
+#   │ Advantages:                                                         │
+#   │ • Containers appear on physical network as independent machines     │
+#   │ • Each container has unique IP visible to external network          │
+#   │ • Better for hardware integration (traffic controllers, RSUs)        │
+#   │ • Reduced network latency for external communication                │
+#   │                                                                     │
+#   │ Prerequisites:                                                       │
+#   │ • Physical network interface must be available                      │
+#   │ • Set MMITSS_NETWORK_ADAPTER environment variable                  │
+#   │ • Network must have enough IPs available for all containers         │
+#   │                                                                     │
+#   │ How to use:                                                         │
+#   │ 1. export MMITSS_NETWORK_ADAPTER=eth0  # or your interface         │
+#   │ 2. In 'networks' section, set: driver: macvlan                     │
+#   │ 3. Uncomment 'parent' under driver_opts                             │
+#   │ 4. Uncomment 'ipv4_address' in each service                         │
+#   │ 5. Configure correct subnet for your network                        │
+#   │                                                                     │
+#   │ Example IPs (10.12.6.0/24 subnet):                                  │
+#   │ • speedway-campbell: 10.12.6.3                                      │
+#   │ • speedway-cherry:   10.12.6.6                                      │
+#   │ • speedway-mountain: 10.12.6.9                                      │
+#   │ • speedway-park:     10.12.6.12                                     │
+#   └─────────────────────────────────────────────────────────────────────┘
+#
+# OPTION 3: OVERLAY Network (For Docker Swarm multi-host deployments)
+#   ┌─────────────────────────────────────────────────────────────────────┐
+#   │ Advantages:                                                         │
+#   │ • Containers span multiple physical machines                        │
+#   │ • Automatic load balancing and service discovery                    │
+#   │ • Encrypted communication between nodes                             │
+#   │                                                                     │
+#   │ Prerequisites:                                                       │
+#   │ • Docker Swarm must be initialized: docker swarm init              │
+#   │ • Multiple Docker hosts connected                                   │
+#   │                                                                     │
+#   │ How to use:                                                         │
+#   │ 1. Initialize Swarm: docker swarm init                              │
+#   │ 2. In 'networks' section, set: driver: overlay                      │
+#   │ 3. Add driver_opts for VXLAN ID: com.docker.network.driver...     │
+#   │ 4. Deploy using: docker stack deploy -c docker-compose.yml mmitss   │
+#   └─────────────────────────────────────────────────────────────────────┘
+#
+# ============================================================================
 
+x-var: &IMAGE_MRP mmitssuarizona/mmitss-mrp-$PROCESSOR:3.0
+
+services:
     speedway-campbell:
         container_name: speedway-campbell
         volumes:
-          - type: bind
-            source: $MMITSS_ROOT/mmitss/config/speedway-sample/field/speedway-campbell/nojournal
-            target: /nojournal
+            - type: bind
+              source: $MMITSS_ROOT/config/speedway-sample/field/speedway-campbell
+              target: /nojournal
+        ports:
+            - "9001:9001"  # Supervisord web interface
         networks:    
-            mmitss_vlan:
-                ipv4_address: 10.12.6.3
+            - mmitss_vlan
+            # For MACVLAN: add ipv4_address below
+            # - mmitss_vlan:
+            #     ipv4_address: 10.12.6.3
         image: *IMAGE_MRP
         environment: 
             - TZ=America/Phoenix
-            
+        
     speedway-cherry:
         container_name: speedway-cherry
         volumes:
             - type: bind
-              source: $MMITSS_ROOT/mmitss/config/speedway-sample/field/speedway-cherry/nojournal
+              source: $MMITSS_ROOT/config/speedway-sample/field/speedway-cherry
               target: /nojournal
+        ports:
+            - "9002:9001"  # Supervisord web interface
         networks:    
-            mmitss_vlan:
-                ipv4_address: 10.12.6.6
+            - mmitss_vlan
         image: *IMAGE_MRP
         environment: 
             - TZ=America/Phoenix
@@ -37,35 +111,72 @@ x-var: &IMAGE_MRP
         container_name: speedway-mountain
         volumes:
             - type: bind
-              source: $MMITSS_ROOT/mmitss/config/speedway-sample/field/speedway-mountain/nojournal
+              source: $MMITSS_ROOT/config/speedway-sample/field/speedway-mountain
               target: /nojournal
+        ports:
+            - "9003:9001"  # Supervisord web interface
         networks:    
-            mmitss_vlan:
-                ipv4_address: 10.12.6.9      
+            - mmitss_vlan
         image: *IMAGE_MRP
         environment: 
             - TZ=America/Phoenix
 
     speedway-park:
-        container_name: 10.12.6.12
+        container_name: speedway-park
         volumes:
             - type: bind
-              source: $MMITSS_ROOT/mmitss/config/speedway-sample/field/speedway-park/nojournal
+              source: $MMITSS_ROOT/config/speedway-sample/field/speedway-park
               target: /nojournal
+        ports:
+            - "9004:9001"  # Supervisord web interface
         networks:    
-            mmitss_vlan:
-                ipv4_address: 10.12.6.12       
+            - mmitss_vlan
         image: *IMAGE_MRP
         environment: 
             - TZ=America/Phoenix
 
 networks:
+    # ========================================================================
+    # NETWORK DRIVER OPTIONS - Choose ONE configuration below:
+    # ========================================================================
+    
     mmitss_vlan:
-        driver: macvlan
-        driver_opts:
-            parent: $MMITSS_NETWORK_ADAPTER  
+        # ┌──── OPTION 1: BRIDGE (Current - Recommended for testing) ────┐
+        # │ Best for: Local development, Docker Desktop, CI/CD pipelines  │
+        # │ Containers communicate via container name resolution (DNS)    │
+        # │ No special host configuration needed                          │
+        driver: bridge
         ipam:
             config:
               - subnet: 10.12.6.0/24
-
-              
+        
+        # ┌──── OPTION 2: MACVLAN (Uncomment for production use) ────┐
+        # │ Best for: Hardware integration, real traffic controllers    │
+        # │ Prerequisites: Set MMITSS_NETWORK_ADAPTER env variable      │
+        # │ Example: export MMITSS_NETWORK_ADAPTER=eth0                 │
+        # │                                                              │
+        # driver: macvlan
+        # driver_opts:
+        #     parent: $MMITSS_NETWORK_ADAPTER  # Your physical interface
+        # ipam:
+        #     config:
+        #       - subnet: 10.12.6.0/24
+        #         gateway: 10.12.6.1
+        
+        # ┌──── OPTION 3: OVERLAY (For Docker Swarm) ────┐
+        # │ Best for: Multi-host deployments              │
+        # │ Prerequisites: docker swarm init               │
+        # │                                                │
+        # driver: overlay
+        # driver_opts:
+        #     com.docker.network.driver.overlay.vxlanid_list: "4001"
+        # ipam:
+        #     config:
+        #       - subnet: 10.12.6.0/24
+        
+        # ┌──── OPTION 4: HOST (For advanced use cases) ────┐
+        # │ Best for: Raw host network access               │
+        # │ Warning: Containers share host network stack    │
+        # │ Use only if you need full host network access   │
+        # │                                                 │
+        # driver: host              

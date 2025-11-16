@@ -6,7 +6,8 @@ services:
     container_name: speedway-campbell
     volumes:
       - type: bind
-        source: /home/norris/Documents/mmitss-az/config/speedway-sample/simulation/speedway-campbell/nojournal/bin
+        # source: /home/norris/Documents/mmitss-az/config/speedway-sample/simulation/speedway-campbell/nojournal/bin
+        source: ${MMITSS_ROOT}/config/speedway-sample/simulation/speedway-campbell/nojournal/bin
         target: /nojournal/bin
     networks:
       mmitss_vlan:
@@ -24,7 +25,8 @@ services:
     container_name: speedway-cherry
     volumes:
       - type: bind
-        source: /home/norris/Documents/mmitss-az/config/speedway-sample/simulation/speedway-cherry/nojournal/bin
+        # source: /home/norris/Documents/mmitss-az/config/speedway-sample/simulation/speedway-cherry/nojournal/bin
+        source: ${MMITSS_ROOT}/config/speedway-sample/simulation/speedway-cherry/nojournal/bin
         target: /nojournal/bin
     networks:
       mmitss_vlan:
@@ -42,7 +44,8 @@ services:
     container_name: speedway-mountain
     volumes:
       - type: bind
-        source: /home/norris/Documents/mmitss-az/config/speedway-sample/simulation/speedway-mountain/nojournal/bin
+        # source: /home/norris/Documents/mmitss-az/config/speedway-sample/simulation/speedway-mountain/nojournal/bin
+        source: ${MMITSS_ROOT}/config/speedway-sample/simulation/speedway-mountain/nojournal/bin
         target: /nojournal/bin
     networks:
       mmitss_vlan:
@@ -60,7 +63,8 @@ services:
     container_name: speedway-park
     volumes:
       - type: bind
-        source: /home/norris/Documents/mmitss-az/config/speedway-sample/simulation/speedway-park/nojournal/bin
+        # source: /home/norris/Documents/mmitss-az/config/speedway-sample/simulation/speedway-park/nojournal/bin
+        source: ${MMITSS_ROOT}/config/speedway-sample/simulation/speedway-park/nojournal/bin
         target: /nojournal/bin
     networks:
       mmitss_vlan:
@@ -78,7 +82,8 @@ services:
     container_name: simulation_server-tools
     volumes:
       - type: bind
-        source: /home/norris/Documents/mmitss-az/config/simulation_server-tools/nojournal/bin
+        # source: /home/norris/Documents/mmitss-az/config/simulation_server-tools/nojournal/bin
+        source: ${MMITSS_ROOT}/config/simulation_server-tools/nojournal/bin
         target: /nojournal/bin
     networks:
       mmitss_vlan:

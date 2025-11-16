@@ -42,6 +42,14 @@ Other system requirements are defined in /docs/mmitss-deployment/mmitss-build-do
 
 Instructions for building MMITSS are in the /docs/mmitss-deployment/mmitss-build-docker-image.docx file 
 
+Also see: [build/README.md](build/README.md) for updated build documentation and troubleshooting
+
+### Build Quick Start
+```bash
+cd build/
+./scripts/build-mmitss.sh
+```
+
 ## Testing
 
 Tests are provided for many of the MMITSS components, but they are not currently automated. Where specific tests are provided, an input generator and output receiver (if used) is provided. For example see /src/mrp/traffic-controller-interface/tests or /src/mrp/priority-request-solver/test. Additional test scripts and automated testing are planned in future sprints.
@@ -52,14 +60,72 @@ Tests are provided for many of the MMITSS components, but they are not currently
 
 Instructions for deploying MMITSS are in /docs/mmitss-deployment/mmitss-field-deployment.docx
 
+Also see: [build/docker-compose/README.md](build/docker-compose/README.md) for deployment troubleshooting
+
 ### MMITSS Simulation Platform
 
 Instructions for setting up MMITSS Simulation using VISSIM are in /docs/mmitss-deloyment/mmitss-simulation-deployment.docx
 
+---
+
+# Recent Updates - November 2025
+
+## Critical Fixes Applied ✅
+
+### 1. Docker-Compose YAML Validation
+- **Issue:** Invalid YAML syntax prevented deployment
+- **Fix:** Corrected YAML anchor syntax and indentation in all docker-compose files
+- **Impact:** Deployment now works without configuration errors
+- **Verification:** `docker-compose config` now passes without errors
+
+### 2. Error Handling & Logging
+- **Issue:** Silent failures made debugging impossible
+- **Fix:** Added comprehensive error logging to all components
+- **Impact:** JSON parsing and exception errors now logged to stderr
+- **Benefit:** Better visibility into configuration and runtime issues
+
+### 3. Memory Management
+- **Issue:** Zero-sized array allocations caused crashes
+- **Fix:** Corrected array allocation order in analysis tools
+- **Impact:** Tools no longer crash from uninitialized memory
+
+### 4. Python Exception Handling
+- **Issue:** Bare exception handlers silently swallowed all errors
+- **Fix:** Added specific exception handling with stderr logging
+- **Impact:** Python components now report errors clearly
+
+---
+
+## Documentation Updates
+
+### New & Updated Documentation Files
+- [build/README.md](build/README.md) - Build documentation with troubleshooting
+- [build/docker-compose/README.md](build/docker-compose/README.md) - Deployment troubleshooting guide
+- [FIXES_SUMMARY.md](FIXES_SUMMARY.md) - Detailed technical changes
+
+### Deployment Troubleshooting
+
+**Q: Docker-compose fails with YAML validation errors**  
+A: Update your docker-compose files from the repository. All files have been corrected in November 2025.
+
+**Q: Components fail with JSON parsing errors**  
+A: This is now visible (previously silent). Check your config JSON format using: `python -m json.tool < config.json`
+
+**Q: BSM Processor fails silently**  
+A: Errors are now logged to stderr. Check: `docker logs [container_name] 2>&1 | grep -i error`
+
+**Q: Tools crash with segmentation faults**  
+A: Memory allocation bugs have been fixed. Rebuild with latest source code.
+
+See [build/docker-compose/README.md](build/docker-compose/README.md) for comprehensive troubleshooting guide.
+
+---
 
 # Additional Notes
 
 __Known Issues:__ See [Issue Tracker](https://github.com/mmitss/mmitss-az/issues).
+
+__Recent Fixes:__ See [FIXES_SUMMARY.md](FIXES_SUMMARY.md) for detailed information about November 2025 updates.
 
 # Version History and Retention
 __Status__: This project is in the release phase.

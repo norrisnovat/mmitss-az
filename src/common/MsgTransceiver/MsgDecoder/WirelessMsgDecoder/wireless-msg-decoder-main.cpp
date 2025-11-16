@@ -13,7 +13,11 @@ int main()
     Json::CharReaderBuilder builder;
     Json::CharReader * reader = builder.newCharReader();
     string errors{};
-    reader->parse(configJsonString.c_str(), configJsonString.c_str() + configJsonString.size(), &jsonObject_config, &errors);        
+    if (!reader->parse(configJsonString.c_str(), configJsonString.c_str() + configJsonString.size(), &jsonObject_config, &errors)) {
+        std::cerr << "JSON parsing error in wireless-msg-decoder-main: " << errors << std::endl;
+        delete reader;
+        return 1;
+    }
     delete reader;
 
     TransceiverDecoder decoder;

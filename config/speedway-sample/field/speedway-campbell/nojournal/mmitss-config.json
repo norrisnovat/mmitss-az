@@ -1,0 +1,17 @@
+{
+  "HostIp": "10.12.6.3",
+  "ApplicationPlatform": "roadside",
+  "PortNumber": {
+    "MessageTransceiver": {
+      "MessageEncoder": 18001,
+      "MessageDecoder": 18002
+    },
+    "PriorityRequestServer": 18003,
+    "TrajectoryAware": 18004,
+    "TrafficControlInterface": 18005,
+    "SignalCoordinationRequestGenerator": 18006
+  },
+  "SystemPerformanceTimeInterval": 30.0,
+  "PeerDataDecoding": true,
+  "NumberOfPhases": 8
+}

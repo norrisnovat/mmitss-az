@@ -167,7 +167,11 @@ void BasicVehicle::json2BasicVehicle(string jsonString)
 	Json::CharReader *reader = builder.newCharReader();
 	std::string errors{};
 
-    reader->parse(jsonString.c_str(), jsonString.c_str() + jsonString.size(), &jsonObject, &errors);
+    if (!reader->parse(jsonString.c_str(), jsonString.c_str() + jsonString.size(), &jsonObject, &errors)) {
+        std::cerr << "JSON parsing error in BasicVehicle::json2BasicVehicle: " << errors << std::endl;
+        delete reader;
+        return;
+    }
 	delete reader;
 
     temporaryID = (jsonObject["BasicVehicle"]["temporaryID"]).asInt();

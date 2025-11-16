@@ -1,0 +1,179 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║               🚀 MMITSS WEB INTERFACES - QUICK START CARD 🚀                 ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+✅ STATUS: ALL SYSTEMS ONLINE & RESPONDING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ✓ speedway-campbell    UP 45 minutes
+  ✓ speedway-cherry      UP 45 minutes
+  ✓ speedway-mountain    UP 53 minutes
+  ✓ speedway-park        UP 45 minutes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌐 CLICK TO OPEN IN BROWSER (Pick any one):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  👉 http://localhost:9001   ← CAMPBELL (START HERE!)
+  👉 http://localhost:9002   ← CHERRY
+  👉 http://localhost:9003   ← MOUNTAIN
+  👉 http://localhost:9004   ← PARK
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 WHAT YOU'LL SEE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  A dashboard with 12 services:
+
+    Process Name                      Status        CPU%   Memory
+    ────────────────────────────────────────────────────────────
+    M_MsgEncoder                      ✅ RUNNING    0.1%   45 MB
+    M_PriorityRequestServer           ✅ RUNNING    0.2%   52 MB
+    M_PriorityRequestSolver           ✅ RUNNING    0.1%   48 MB
+    M_SystemInterface                 ✅ RUNNING    0.3%   61 MB
+    M_TrajectoryAware                 ✅ RUNNING    0.2%   55 MB
+    M_WirelessMsgDecoder              ✅ RUNNING    0.1%   38 MB
+    M_MapSpatBroadcaster              🔴 FATAL       N/A    N/A
+    M_TrafficControllerInterface      🔴 FATAL       N/A    N/A
+    M_SignalCoordination              🔴 FATAL       N/A    N/A
+    M_V2XDataCollector                🔴 FATAL       N/A    N/A
+    M_SnmpEngine                      ⚪ EXITED      N/A    N/A
+    M_TimePhaseDiagramTool            ⏸️  STOPPED    N/A    N/A
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎮 BUTTONS NEXT TO EACH SERVICE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [START]      → Turn on a stopped service
+  [STOP]       → Turn off a running service
+  [RESTART]    → Stop and restart a service
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📖 3-STEP TUTORIAL:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: OPEN THE INTERFACE
+  → Open http://localhost:9001 in your browser
+  → You'll see the dashboard with all services
+
+STEP 2: UNDERSTAND THE STATUS
+  ✅ GREEN/RUNNING = Service is working (good!)
+  🔴 RED/FATAL     = Service crashed (check logs)
+  ⚪ EXITED        = Service stopped
+  ⏸️  STOPPED      = Service is off
+
+STEP 3: CLICK A SERVICE NAME FOR LOGS
+  → Click "M_MsgEncoder" (blue text)
+  → See what the service is doing
+  → Look for [ERROR] messages if red
+  → Click [START] or [RESTART] to fix it
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 QUICK TASKS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CHECK IF SYSTEM IS HEALTHY:
+  1. Open http://localhost:9001
+  2. Count services with ✅ RUNNING
+  3. Should see 6+ running
+  4. ✓ If yes → System is working!
+
+START A STOPPED SERVICE:
+  1. Find the service (e.g., M_TimePhaseDiagramTool)
+  2. Click [START]
+  3. Wait 2 seconds
+  4. Status changes to RUNNING (or FATAL if problem)
+
+DEBUG A FAILED SERVICE:
+  1. Find the red 🔴 FATAL service
+  2. Click the service name (blue text)
+  3. Read the log output
+  4. Look for [ERROR]
+  5. Click [RESTART] to try again
+
+MONITOR SYSTEM:
+  1. Open all 4 tabs: 9001, 9002, 9003, 9004
+  2. Look at CPU% and Memory columns
+  3. ✓ Normal: 0.1% - 0.5% CPU, 30-100MB memory
+  4. ⚠️  Problem: >5% CPU or >200MB memory
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 COMMAND LINE (For Power Users):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Inside container (advanced users only):
+
+  docker exec -it speedway-campbell /bin/bash
+  supervisorctl status                    # Show all processes
+  supervisorctl restart M_MsgEncoder      # Restart one
+  supervisorctl tail M_MsgEncoder         # View logs
+  supervisorctl tail M_MsgEncoder -f      # Live logs
+  exit                                    # Leave container
+
+View logs from host:
+
+  docker logs -f speedway-campbell        # Live logs
+  docker logs speedway-campbell | grep ERROR  # Find errors
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️  WHAT IF I SEE RED/FATAL?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+THIS IS NORMAL in test environments!
+
+Some services need:
+  • Configuration files (check /nojournal/bin/*.json)
+  • Other services running first
+  • Network connectivity
+  • Hardware/drivers available
+
+WHAT TO DO:
+
+1. Click the red service to see logs
+2. Read the error message
+3. Understand what's missing
+4. Fix it (configuration, hardware, etc.)
+5. Click [START] or [RESTART]
+6. Check logs again
+
+Example: "M_MapSpatBroadcaster FATAL"
+  1. Click M_MapSpatBroadcaster
+  2. See: [ERROR] Cannot bind to port 5001
+  3. Means: Port 5001 is in use
+  4. Solution: Stop other service using port 5001, then START this one
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 FOR MORE HELP:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  📖 Full guide: HOW_TO_USE_WEB_INTERFACES.md
+  📖 Quick ref:  WEB_INTERFACES_QUICK_LAUNCH.md
+  📖 Complete:   WEB_INTERFACES_GUIDE.md
+  📖 Docker:     DOCKER_QUICK_REFERENCE.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 YOU'RE READY TO GO!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Open this in your browser RIGHT NOW:
+
+  👉👉👉 http://localhost:9001 👈👈👈
+
+Your MMITSS system is running and monitored!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Status: LIVE
+📅 Date: November 15, 2025
+🎉 All 4 interfaces responding at ports 9001-9004
+
+╚════════════════════════════════════════════════════════════════════════════╝

@@ -14,7 +14,11 @@ int main()
     Json::CharReaderBuilder builder;
     Json::CharReader * reader = builder.newCharReader();
     string errors{};
-    reader->parse(configJsonString.c_str(), configJsonString.c_str() + configJsonString.size(), &jsonObject_config, &errors);        
+    if (!reader->parse(configJsonString.c_str(), configJsonString.c_str() + configJsonString.size(), &jsonObject_config, &errors)) {
+        std::cerr << "JSON parsing error in transceiver-encoder-main: " << errors << std::endl;
+        delete reader;
+        return 1;
+    }
     delete reader;
 
     UdpSocket encoderSocket(static_cast<short unsigned int>(jsonObject_config["PortNumber"]["MessageTransceiver"]["MessageEncoder"].asInt()));

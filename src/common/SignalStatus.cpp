@@ -278,7 +278,11 @@ void SignalStatus::json2SignalStatus(std::string jsonString)
 	Json::CharReader *reader = builder.newCharReader();
 	std::string errors{};
 
-    reader->parse(jsonString.c_str(), jsonString.c_str() + jsonString.size(), &jsonObject, &errors);
+    if (!reader->parse(jsonString.c_str(), jsonString.c_str() + jsonString.size(), &jsonObject, &errors)) {
+        std::cerr << "JSON parsing error in SignalStatus::json2SignalStatus: " << errors << std::endl;
+        delete reader;
+        return;
+    }
 	delete reader;
 
     const Json::Value values = jsonObject["SignalStatus"]["requestorInfo"];

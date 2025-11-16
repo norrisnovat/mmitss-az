@@ -40,7 +40,11 @@ TransceiverEncoder::TransceiverEncoder()
     Json::CharReaderBuilder builder;
     Json::CharReader * reader = builder.newCharReader();
     string errors{};
-    reader->parse(configJsonString.c_str(), configJsonString.c_str() + configJsonString.size(), &jsonObject, &errors);        
+    if (!reader->parse(configJsonString.c_str(), configJsonString.c_str() + configJsonString.size(), &jsonObject, &errors)) {
+        std::cerr << "JSON parsing error in TransceiverEncoder constructor: " << errors << std::endl;
+        delete reader;
+        return;
+    }
     delete reader;
 
     applicationPlatform = (jsonObject["ApplicationPlatform"]).asString();
@@ -58,7 +62,11 @@ int TransceiverEncoder::getMessageType(string jsonString)
 	Json::CharReaderBuilder builder;
 	Json::CharReader *reader = builder.newCharReader();
 	string errors{};
-    reader->parse(jsonString.c_str(), jsonString.c_str() + jsonString.size(), &jsonObject, &errors);
+    if (!reader->parse(jsonString.c_str(), jsonString.c_str() + jsonString.size(), &jsonObject, &errors)) {
+        std::cerr << "JSON parsing error in TransceiverEncoder::getMessageType: " << errors << std::endl;
+        delete reader;
+        return -1;
+    }
 	delete reader;
 
     if ((jsonObject["MsgType"]).asString() == "MAP")
@@ -180,7 +188,11 @@ string TransceiverEncoder::SPaTEncoder(string jsonString)
 	Json::CharReaderBuilder builder;
 	Json::CharReader *reader = builder.newCharReader();
 	string errors{};
-    reader->parse(jsonString.c_str(), jsonString.c_str() + jsonString.size(), &jsonObject, &errors);
+    if (!reader->parse(jsonString.c_str(), jsonString.c_str() + jsonString.size(), &jsonObject, &errors)) {
+        std::cerr << "JSON parsing error in TransceiverEncoder::SPaTEncoder: " << errors << std::endl;
+        delete reader;
+        return "";
+    }
 	delete reader;
 
     size_t bufSize = DsrcConstants::maxMsgSize;
