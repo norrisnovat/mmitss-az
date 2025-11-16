@@ -27,7 +27,7 @@ def update_ips_in_json(file_path, new_subnet):
     ips = find_ips(content)
 
     if not ips:
-        print(f"No IP addresses found in {file_path}.")
+        print(f"No IP addresses found in {file_path}. Skipping this file.")
         return
 
     print(f"\nIP addresses found in {file_path}:")
@@ -73,7 +73,7 @@ def update_ips_in_supervisord(file_path, new_subnet):
             ips.append((i, match.group(0)))
 
     if not ips:
-        print(f"No IP addresses found in {file_path}.")
+        print(f"No IP addresses found in {file_path}. Skipping this file.")
         return
 
     print(f"\nIP addresses found in {file_path}:")
@@ -106,7 +106,7 @@ def main():
             file_path = os.path.join(directory, filename)
             new_subnet = input(f"Enter the new subnet for {filename} (e.g., 192.168.12.): ")
             update_ips_in_json(file_path, new_subnet)
-        elif filename == "supervisord.conf":
+        elif filename.endswith(".conf"):
             file_path = os.path.join(directory, filename)
             new_subnet = input(f"Enter the new subnet for {filename} (e.g., 192.168.12.): ")
             update_ips_in_supervisord(file_path, new_subnet)

@@ -1,108 +1,97 @@
-
 version: "3.8"
-    
+
+x-var: &IMAGE_MRP_SIMULATION
+    mmitssuarizona/mmitss-mrp-x86:3.0
+
+x-var: &IMAGE_SERVER_TOOLS
+    mmitssuarizona/mmitss-simulation_server-tools-x86:3.0
+
 services:
-  speedway-campbell:
-    container_name: speedway-campbell
-    volumes:
-      - type: bind
-        # source: /home/norris/Documents/mmitss-az/config/speedway-sample/simulation/speedway-campbell/nojournal/bin
-        source: ${MMITSS_ROOT}/config/speedway-sample/simulation/speedway-campbell/nojournal/bin
-        target: /nojournal/bin
-    networks:
-      mmitss_vlan:
-        ipv4_address: 192.168.12.3
-    ports:
-      - "9001:9001"  # Replace with the correct port if needed
-    image: mmitssuarizona/mmitss-mrp-${PROCESSOR}:3.0
-    environment:
-      - TZ=America/Phoenix
 
-    security_opt:
-      - apparmor=unconfined
+    speedway-campbell:
+        container_name: speedway-campbell
+        volumes:
+          - type: bind
+            source: /home/stol/mmitss-az/config/speedway-sample/simulation/speedway-campbell/nojournal/bin
+            target: /nojournal/bin
+        networks:    
+            mmitss_vlan:
+                ipv4_address: 10.12.6.3
+        image: *IMAGE_MRP_SIMULATION
+        environment: 
+            - TZ=America/Phoenix
+        ports:
+            - "9001:9001"  
+            - "5001:5001"  # Expose the Message Distributor port
+            - "10002:10002"  # Message Decoder
+            - "10003:10003"  # Message Encoder
+            - "20002:20002"  # Priority Request Server
 
-  speedway-cherry:
-    container_name: speedway-cherry
-    volumes:
-      - type: bind
-        # source: /home/norris/Documents/mmitss-az/config/speedway-sample/simulation/speedway-cherry/nojournal/bin
-        source: ${MMITSS_ROOT}/config/speedway-sample/simulation/speedway-cherry/nojournal/bin
-        target: /nojournal/bin
-    networks:
-      mmitss_vlan:
-        ipv4_address: 192.168.12.6
-    ports:
-      - "9002:9002"  # Replace with the correct port if needed
-    image: mmitssuarizona/mmitss-mrp-${PROCESSOR}:3.0
-    environment:
-      - TZ=America/Phoenix
+    speedway-cherry:
+        container_name: speedway-cherry
+        volumes:
+          - type: bind
+            source: /home/stol/mmitss-az/config/speedway-sample/simulation/speedway-cherry/nojournal/bin
+            target: /nojournal/bin
+        networks:    
+            mmitss_vlan:
+                ipv4_address: 10.12.6.6
+        image: *IMAGE_MRP_SIMULATION
+        environment: 
+            - TZ=America/Phoenix
+        ports:
+            - "8081:8080"  
 
-    security_opt:
-      - apparmor=unconfined
+    speedway-mountain:
+        container_name: speedway-mountain
+        volumes:
+          - type: bind
+            source: /home/stol/mmitss-az/config/speedway-sample/simulation/speedway-mountain/nojournal/bin
+            target: /nojournal/bin
+        networks:    
+            mmitss_vlan:
+                ipv4_address: 10.12.6.9
+        image: *IMAGE_MRP_SIMULATION
+        environment: 
+            - TZ=America/Phoenix
+        ports:
+            - "8082:8080"  
 
-  speedway-mountain:
-    container_name: speedway-mountain
-    volumes:
-      - type: bind
-        # source: /home/norris/Documents/mmitss-az/config/speedway-sample/simulation/speedway-mountain/nojournal/bin
-        source: ${MMITSS_ROOT}/config/speedway-sample/simulation/speedway-mountain/nojournal/bin
-        target: /nojournal/bin
-    networks:
-      mmitss_vlan:
-        ipv4_address: 192.168.12.9
-    ports:
-      - "9003:9003"  # Replace with the correct port if needed
-    image: mmitssuarizona/mmitss-mrp-${PROCESSOR}:3.0
-    environment:
-      - TZ=America/Phoenix
+    speedway-park:
+        container_name: speedway-park
+        volumes:
+          - type: bind
+            source: /home/stol/mmitss-az/config/speedway-sample/simulation/speedway-park/nojournal/bin
+            target: /nojournal/bin
+        networks:    
+            mmitss_vlan:
+                ipv4_address: 10.12.6.12
+        image: *IMAGE_MRP_SIMULATION
+        environment: 
+            - TZ=America/Phoenix
+        ports:
+            - "8083:8080"  
 
-    security_opt:
-      - apparmor=unconfined
-
-  speedway-park:
-    container_name: speedway-park
-    volumes:
-      - type: bind
-        # source: /home/norris/Documents/mmitss-az/config/speedway-sample/simulation/speedway-park/nojournal/bin
-        source: ${MMITSS_ROOT}/config/speedway-sample/simulation/speedway-park/nojournal/bin
-        target: /nojournal/bin
-    networks:
-      mmitss_vlan:
-        ipv4_address: 192.168.12.12
-    ports:
-      - "9004:9004"  # Replace with the correct port if needed
-    image: mmitssuarizona/mmitss-mrp-${PROCESSOR}:3.0
-    environment:
-      - TZ=America/Phoenix
-
-    security_opt:
-      - apparmor=unconfined
-
-  simulation_server-tools:
-    container_name: simulation_server-tools
-    volumes:
-      - type: bind
-        # source: /home/norris/Documents/mmitss-az/config/simulation_server-tools/nojournal/bin
-        source: ${MMITSS_ROOT}/config/simulation_server-tools/nojournal/bin
-        target: /nojournal/bin
-    networks:
-      mmitss_vlan:
-        ipv4_address: 192.168.12.20
-    ports:
-      - "9005:9005"  # This is the port mapping for the supervisord web interface
-    image: mmitssuarizona/mmitss-simulation_server-tools-${PROCESSOR}:3.0
-    environment:
-      - TZ=America/Phoenix
-
-    security_opt:
-      - apparmor=unconfined
-
+    simulation_server-tools:
+        container_name: simulation_server-tools
+        volumes:
+          - type: bind
+            source: /home/stol/mmitss-az/config/simulation_server-tools/nojournal/bin
+            target: /nojournal/bin
+        networks:    
+            mmitss_vlan:
+                ipv4_address: 10.12.6.20
+        image: *IMAGE_SERVER_TOOLS
+        environment: 
+            - TZ=America/Phoenix
+        ports:
+            - "8084:8080"  
+            
 networks:
-  mmitss_vlan:
-    driver: macvlan
-    driver_opts:
-      parent: enp0s3
-    ipam:
-      config:
-        - subnet: 192.168.12.0/24
-          gateway: 192.168.12.1
+    mmitss_vlan:
+        driver: macvlan
+        driver_opts:
+            parent: enx10828609982d
+        ipam:
+            config:
+              - subnet: 10.12.6.0/24
